@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script>
+        L_NO_TOUCH = false;
+        L_DISABLE_3D = false;
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://rawcdn.githack.com/python-visualization/folium/master/folium/templates/leaflet.awesome.rotate.css"/>
+    <style>
+        html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; right: 0; left: 0; }
+        #map_35e7b192f95e41ce860f860043f86c3b { position: relative; width: 100%; height: 100%; }
+
+        .leaflet-control-zoom {
+            bottom: 10px;
+            right: 10px;
+            top: auto;
+            left: auto;
+        }
+
+        /* Ensure the navbar brand is always white */
+        .navbar-brand {
+            color: white !important;
+        }
+
+        .navbar-brand:focus, .navbar-brand:hover, .navbar-brand:visited, .navbar-brand:active {
+            color: white !important;
+        }
+
+        /* Custom style for the about button */
+        .btn-custom {
+            background-color: rgba(255, 255, 255, 0.1); /* Less intense background color */
+            color: white; /* White text color */
+            border: none;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .btn-custom:hover {
+            background-color: rgba(255, 255, 255, 0.2); /* Slightly more intense on hover */
+            color: white; /* White text color on hover */
+        }
+
+        /* Adjust positioning of the About button */
+        .about-button {
+            float: right; /* Align button to the right */
+            margin-right: 10px; /* Add a margin for spacing */
+        }
+
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+</head>
+<body>
+    <div class="folium-map" id="map_35e7b192f95e41ce860f860043f86c3b"></div>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>                        
+                </button>
+                <a class="navbar-brand" href="#">Rita's World Map</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><button type="button" class="btn btn-custom navbar-btn about-button" data-toggle="modal" data-target="#aboutModal">About Me</button></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- About Me Modal -->
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="aboutModalLabel">About Me</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Hello! I'm Rita. This map showcases various interesting places I've visited. I love traveling and exploring new places. Feel free to reach out if you want to know more about my travels!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+          
+    <script>
+        // Function to calculate 40% of screen width and height
+        function calculatePopupSize() {
+            var screenWidth = window.innerWidth;
+            var screenHeight = window.innerHeight;
+            var smallerDimension = Math.min(screenWidth, screenHeight) * 0.4; // 40% of the smaller dimension
+            return { width: smallerDimension, height: smallerDimension };
+        }
+
+        // Initialize the map
+        var map = L.map("map_35e7b192f95e41ce860f860043f86c3b", {
+            center: [46.8, 8.2],
+            zoom: 9,
+            zoomControl: false, // Disable the default zoom control
+            preferCanvas: false,
+        });
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "Data by &copy; <a href='http://openstreetmap.org'>OpenStreetMap</a>, under <a href='http://www.openstreetmap.org/copyright'>ODbL</a>."
+        }).addTo(map);
+
+        // Add zoom control to the bottom right corner
+        L.control.zoom({
+            position: 'bottomright'
+        }).addTo(map);
+
+        // Function to add a marker with a popup
+        function addMarkerWithPopup(lat, lng, title, imageUrl) {
+            var popupSize = calculatePopupSize();
+            var marker = L.marker([lat, lng]).addTo(map);
+            var popup = L.popup({
+            maxWidth: popupSize.width,
+            minWidth: popupSize.width,
+            maxHeight: popupSize.height,
+            minHeight: popupSize.height,
+            autoPan: true,
+            autoPanPadding: L.point(50, 60), // Padding to keep the popup within the map's viewport
+            keepInView: true,
+        });
+
+        // Create HTML content for the popup
+        var htmlContent = `
+                <div id="popupContent" style="width: ${popupSize.width}px; height: ${popupSize.height}px; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000;">
+                    <p style="text-align: center; margin: 0;"><b>${title}</b></p>
+                    <img src="${imageUrl}" style="max-width: 100%; max-height: calc(100% - 20px); object-fit: contain;" loading="lazy">
+                </div>
+            `;
+            popup.setContent(htmlContent);
+            marker.bindPopup(popup);
+
+            // Variable to track if the popup should stay open
+            var keepPopupOpen = false;
+
+            // Add event listeners for hover to show and hide the popup
+            marker.on('mouseover', function(e) {
+                if (!keepPopupOpen) {
+                    marker.bindPopup(popup).openPopup();
+                }
+            });
+
+            marker.on('mouseout', function(e) {
+                if (!keepPopupOpen) {
+                    marker.closePopup();
+                }
+            });
+
+            // Add event listener for click to keep the popup open
+            marker.on('click', function(e) {
+                keepPopupOpen = true;
+                marker.bindPopup(popup).openPopup();
+            });
+
+            // Close the popup if the map is clicked (to reset the state)
+            map.on('click', function(e) {
+                keepPopupOpen = false;
+                marker.closePopup();
+            });
+        }
+
+        // Add markers with popups
+        addMarkerWithPopup(46.8, 7.2, "Aletsch Arena", "images/AletschArena.jpg");
+        addMarkerWithPopup(46.7, 8.0, "Bachalpsee", "images/Bachalpsee.jpg");
+        addMarkerWithPopup(47.1, 7.2, "Biel", "images/Biel.jpg");
+        addMarkerWithPopup(46.5, 7.7, "Blausee", "images/Blausee.jpg");
+        addMarkerWithPopup(46.2, 6.9, "Champery", "images/Champery.jpg");
+        addMarkerWithPopup(46.3, 6.9, "ChateuxOeux", "images/ChateuxOeux.jpg");
+        addMarkerWithPopup(46.6, 6.3, "Col Du Mollendruz", "images/ColDuMollendruz.jpg");
+        addMarkerWithPopup(46.6, 6.5, "Crux Du Van", "images/CruxDuVan.jpg");
+        addMarkerWithPopup(46.7, 6.4, "Dent De Vaulion", "images/DentDeVaulion.jpg");
+        addMarkerWithPopup(46.7, 6.4, "Dent De Vaulion 2", "images/DentDeVaulion2.jpg");
+        addMarkerWithPopup(46.6, 8.0, "Glacier Express", "images/GlacierExpress.jpg");
+        addMarkerWithPopup(46.1, 7.2, "Grand Chavalard", "images/Grand Chavalard.jpg");
+
+
+    </script>
+</body>
+</html>
